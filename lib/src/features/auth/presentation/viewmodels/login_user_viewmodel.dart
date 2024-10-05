@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:blott/src/config/service_locators.dart';
 import 'package:blott/src/config/utils/local/auth_local_source.dart';
 import 'package:blott/src/features/auth/domain/dtos/model/user.dart';
-import 'package:blott/src/features/auth/domain/service/login_user.dart';
 
 class LoginUserViewModel extends ChangeNotifier {
-  LoginUserService loginUserService;
-  LoginUserViewModel(this.loginUserService);
+  LoginUserViewModel();
 
   bool activateBtn = false;
 

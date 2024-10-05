@@ -36,11 +36,4 @@ class AppColors {
   static Color tabColor = const Color(0xFF666666);
   static Color veryLightGrayColor = const Color(0xFFE2E4E5);
   static Color darkBlueColor = const Color(0xFF0B0967);
-
-  static LinearGradient moneyswapPrimaryColor = const LinearGradient(
-    begin: Alignment(-1, 0),
-    end: Alignment(1, 0),
-    colors: <Color>[Color(0xFF000066), Color(0xFF0000CC)],
-    stops: <double>[0, 1],
-  );
 }

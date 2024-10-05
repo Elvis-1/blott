@@ -1,5 +1,6 @@
 import 'package:blott/src/core/utils/functions/convert_date.dart';
 import 'package:blott/src/core/utils/functions/internet_checker.dart';
+import 'package:blott/src/features/news/domain/dtos/response/news_list_response.dart';
 import 'package:blott/src/features/news/presentation/viewmodel/news_viewmodel.dart';
 import 'package:blott/src/features/shared/no_internet.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ class News extends StatefulWidget {
 }
 
 class _NewsState extends State<News> {
+  bool hasConnection = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -35,14 +37,20 @@ class _NewsState extends State<News> {
   }
 
   callNewsList() async {
-    // Check for internet connection before making the API call
-    bool hasConnection =
+    // // Check for internet connection before making the API call
+    var response =
         await ConnectionStatusSingleton.getInstance().checkConnection();
 
-    if (!hasConnection) {
+    setState(() {
+      hasConnection = response;
+    });
+
+    if (hasConnection == false) {
       // Show no internet screen
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const NewsDetails()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => NoInternet(
+                destinationWidget: const News(),
+              )));
       return;
     }
 
@@ -55,25 +63,28 @@ class _NewsState extends State<News> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.black,
-        body: StreamBuilder<bool>(
-          stream: ConnectionStatusSingleton.getInstance().connectionChange,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == false) {
-                return const NoInternet();
-              } else {
-                return newsBody();
-              }
-            } else {
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
-              );
-            }
-          },
-        ));
+        body: hasConnection != false
+            ? newsBody()
+            : NoInternet(
+                destinationWidget: const News(),
+              )
+
+        // StreamBuilder<bool>(
+        //   stream: ConnectionStatusSingleton.getInstance().connectionChange,
+        //   builder: (context, snapshot) {
+        //     if (snapshot.hasData && snapshot.data == false) {
+        //       return const NoInternet();
+        //     } else {
+        //       return newsBody();
+        //     }
+        //   },
+        // )
+
+        );
   }
 
   Widget newsBody() {
+    print("Called");
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: Column(
@@ -96,20 +107,30 @@ class _NewsState extends State<News> {
                   itemCount: vm.isLoading == true ? 1 : vm.news?.length ?? 1,
                   itemBuilder: (context, index) {
                     if (vm.isLoading == true) {
+                      print('News is loading');
                       return const Center(
                         child: CircularProgressIndicator.adaptive(),
                       );
                     }
 
                     if (vm.news == null) {
-                      return const SizedBox.shrink();
+                      print('this is news ${vm.news?[0]}');
+                      return Text(
+                        "Something went wrong, try again later",
+                        style: normalTextStyle(
+                            fontFamily: "Roboto",
+                            textColor: AppColors.white,
+                            fontSize: 30),
+                      );
                     }
 
                     var news = vm.news![index];
                     return InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const NewsDetails()));
+                            builder: (context) => NewsDetails(
+                                  news: news,
+                                )));
                       },
                       child: newsContainer(
                           news.image ?? '',

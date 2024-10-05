@@ -31,7 +31,7 @@ class ConnectionStatusSingleton {
 
   // Periodically check for connection every 10 seconds
   void _startPeriodicCheck() {
-    _timer = Timer.periodic(Duration(seconds: 10), (Timer t) async {
+    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) async {
       await checkConnection();
     });
   }

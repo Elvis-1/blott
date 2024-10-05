@@ -30,7 +30,6 @@ class NewsViewModel extends ChangeNotifier {
       print(failure.message);
     }, (success) async {
       _news = success.articles!;
-
       notifyListeners();
     });
   }

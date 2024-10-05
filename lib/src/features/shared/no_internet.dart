@@ -2,8 +2,8 @@ import 'package:blott/src/core/utils/functions/internet_checker.dart';
 import 'package:flutter/material.dart';
 
 class NoInternet extends StatefulWidget {
-  const NoInternet({Key? key}) : super(key: key);
-
+  NoInternet({Key? key, required this.destinationWidget}) : super(key: key);
+  Widget destinationWidget;
   @override
   _NoInternetState createState() => _NoInternetState();
 }
@@ -17,13 +17,16 @@ class _NoInternetState extends State<NoInternet> {
       _isRetrying = true;
     });
 
-    // Check for connection using your Singleton
+    // Check for connection using Singleton
     bool hasConnection =
         await ConnectionStatusSingleton.getInstance().checkConnection();
 
     if (hasConnection) {
       // If connection is back, navigate back to the original screen
-      Navigator.pop(context);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => widget.destinationWidget),
+        (Route<dynamic> route) => false,
+      );
     } else {
       // If still no connection, show a message and keep user on NoInternet screen
       setState(() {
